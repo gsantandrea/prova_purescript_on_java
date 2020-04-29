@@ -13,6 +13,8 @@
   <url>http://www.example.com</url>
 
   <properties>
+    <maven-frontend-plugin.version>1.9.1</maven-frontend-plugin.version>
+    <node.version>v12.16.0</node.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -33,6 +35,69 @@
   </dependencies>
 
   <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <!-- here the phase you need -->
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/extra-resources</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/purescript_code</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>${maven-frontend-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>install_node_and_npm</id>
+              <goals>
+                <goal>install-node-and-npm</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>npm_install</id>
+              <goals>
+                <goal>npm</goal>
+              </goals>
+              <configuration>
+                <arguments>install purescript@0.13.6 spago@0.14.0</arguments>
+              </configuration>
+            </execution>
+            <execution>
+              <id>spago_build</id>
+              <goals>
+                <goal>npm</goal>
+              </goals>
+              <configuration>
+                <arguments>run env -- spago bundle-app --main Main3 --to dist/Main.js</arguments>
+              </configuration>
+            </execution>
+
+          </executions>
+          <configuration>
+            <workingDirectory>${basedir}/target/extra-resources</workingDirectory>
+            <nodeVersion>${node.version}</nodeVersion>
+            <downloadRoot>http://artifactory.gbm.lan:8080/artifactory/nodejs/</downloadRoot>
+          </configuration>
+        </plugin>
+    </plugins>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->

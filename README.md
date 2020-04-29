@@ -1,4 +1,4 @@
 README
 =====
 
-Esempio di applicazione java che invoca codice purescript
+Sample purescript application running in a java project

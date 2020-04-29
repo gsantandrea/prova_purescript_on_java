@@ -1,6 +1,5 @@
 module Main3 where
 
--- in cui si fanno degli esperimenti con i monad tranformer
 import Nashorn (log) as Nashorn
 import Prelude (Unit, bind, discard, pure, show, ($), (+), (<>), (==)) 
 import Data.Either (Either)
